@@ -1,0 +1,158 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "width": 900,
+  "height": 560,
+  "padding": {"top": 25, "left": 0, "right": 0, "bottom": 0},
+  "autosize": "none",
+
+  "signals": [
+    {
+      "name": "scale", "value": 1200,
+      "bind": {"input": "range", "min": 500, "max": 3000}
+    },
+    {
+      "name": "circScale", "value": 1200,
+      "bind": {"input": "range", "min": 0, "max": 3000}
+    },
+    {
+      "name": "translateX", "value": 450,
+      "bind": {"input": "range", "min": -500, "max": 1200}
+    },
+    {
+      "name": "translateY", "value": 260,
+      "bind": {"input": "range", "min": -300, "max": 700}
+    },
+    {
+      "name": "shape", "value": "line",
+      "bind": {"input": "radio", "options": ["line", "curve"]}
+    },
+    {
+      "name": "hover",
+      "value": null,
+      "on": [
+        {"events": "@cell:mouseover", "update": "datum"},
+        {"events": "@cell:mouseout", "update": "null"}
+      ]
+    },
+    {
+      "name": "title",
+      "value": "Avocados",
+      "update": "hover ? hover.name + ' (' + round(hover.volume) + ' avocados)' : 'Avocados'"
+    },
+    {
+      "name": "cell_stroke",
+      "value": null,
+      "on": [
+        {"events": "dblclick", "update": "cell_stroke ? null : 'brown'"},
+        {"events": "mousedown!", "update": "cell_stroke"}
+      ]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "states",
+      "url": "data/us-10m.json",
+      "format": {"type": "topojson", "feature": "states"},
+      "transform": [
+        {
+          "type": "geopath",
+          "projection": "projection"
+        }
+      ]
+    },
+    {
+      "name": "airports",
+      "url": "https://samuelb2.github.io/avocado_dataset/avo_data.csv",
+      "format": {"type": "csv","parse": "auto"
+      },
+      "transform": [
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"]
+        },
+        {
+          "type": "filter",
+          "expr": "datum.x != null && datum.y != null"
+        },
+        {
+          "type": "voronoi", "x": "x", "y": "y"
+        }
+      ]
+    }
+  ],
+
+  "projections": [
+    {
+      "name": "projection",
+      "type": "albersUsa",
+      "scale": {"signal": "scale"},
+      "translate": [{"signal": "translateX"}, {"signal": "translateY"}]
+    }
+  ],
+
+  "scales": [
+  ],
+
+  "marks": [
+    {
+      "type": "path",
+      "from": {"data": "states"},
+      "encode": {
+        "enter": {
+          "fill": {"value": "#dedede"},
+          "stroke": {"value": "white"}
+        },
+        "update": {
+          "path": {"field": "path"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "airports"},
+      "encode": {
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "size": {"signal": "datum.volume / 100000 * 2"},
+          "stroke": {"value": "green"},
+          "fill": {"value": "green"},
+          "fillOpacity": {"value": 0.2}
+        }
+      }
+    },
+    {
+      "type": "path",
+      "name": "cell",
+      "from": {"data": "airports"},
+      "encode": {
+        "enter": {
+          "fill": {"value": "transparent"},
+          "strokeWidth": {"value": 0.35}
+        },
+        "update": {
+          "path": {"field": "path"},
+          "stroke": {"signal": "cell_stroke"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "x": {"value": 895},
+          "y": {"value": 0},
+          "fill": {"value": "black"},
+          "fontSize": {"value": 20},
+          "align": {"value": "right"}
+        },
+        "update": {
+          "text": {"signal": "title"}
+        }
+      }
+    }
+  ]
+}
