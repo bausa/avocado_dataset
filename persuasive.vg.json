@@ -7,26 +7,6 @@
 
   "signals": [
     {
-      "name": "scale", "value": 1200,
-      "bind": {"input": "range", "min": 500, "max": 3000}
-    },
-    {
-      "name": "circScale", "value": 1200,
-      "bind": {"input": "range", "min": 0, "max": 3000}
-    },
-    {
-      "name": "translateX", "value": 450,
-      "bind": {"input": "range", "min": -500, "max": 1200}
-    },
-    {
-      "name": "translateY", "value": 260,
-      "bind": {"input": "range", "min": -300, "max": 700}
-    },
-    {
-      "name": "shape", "value": "line",
-      "bind": {"input": "radio", "options": ["line", "curve"]}
-    },
-    {
       "name": "hover",
       "value": null,
       "on": [
@@ -52,7 +32,7 @@
   "data": [
     {
       "name": "states",
-      "url": "data/us-10m.json",
+      "url": "us-10m.json",
       "format": {"type": "topojson", "feature": "states"},
       "transform": [
         {
@@ -86,9 +66,7 @@
   "projections": [
     {
       "name": "projection",
-      "type": "albersUsa",
-      "scale": {"signal": "scale"},
-      "translate": [{"signal": "translateX"}, {"signal": "translateY"}]
+      "type": "albersUsa"
     }
   ],
 
