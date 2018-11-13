@@ -18,14 +18,6 @@
       "name": "title",
       "value": "Avocados",
       "update": "hover ? hover.name + ' (' + round(hover.volume) + ' avocados)' : 'Avocados'"
-    },
-    {
-      "name": "cell_stroke",
-      "value": null,
-      "on": [
-        {"events": "dblclick", "update": "cell_stroke ? null : 'brown'"},
-        {"events": "mousedown!", "update": "cell_stroke"}
-      ]
     }
   ],
 
@@ -111,8 +103,7 @@
           "strokeWidth": {"value": 0.35}
         },
         "update": {
-          "path": {"field": "path"},
-          "stroke": {"signal": "cell_stroke"}
+          "path": {"field": "path"}
         }
       }
     },
